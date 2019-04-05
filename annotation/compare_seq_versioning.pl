@@ -4,10 +4,14 @@ use Data::Dumper qw(Dumper);
 use List::Util 'max';
 
 #use warnings;
-open OUT, ">list.txt" or die;
-open OUT1, ">dlist.txt" or die;
+my $in1=$ARGV[0];
+my $in2=$ARGV[1];
+my $out=$ARGV[2];
 
-open ($sfh, "<ITAG3.0_transcripts.fasta");
+open OUT, ">$out" or die;
+open OUT1, ">d$out" or die;
+
+open ($sfh, "<$in2");
 
 my %hNew;
 my @list;
@@ -21,7 +25,7 @@ while (<$sfh>) {
     #print $1;
 }
 
-open ($sfh2, "<ITAG2.4_transcript.fasta");
+open ($sfh2, "<$in1");
 
 my %hOld;
 local $/ = '>';

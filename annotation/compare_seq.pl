@@ -17,6 +17,7 @@ my $inp2=$ARGV[1];
 my $out=$ARGV[2];
 
 open OUT, ">$out" or die;
+open OUTd, ">$out.dif" or die;
 
 open ($sfh, "<$inp2");
 
@@ -65,9 +66,13 @@ foreach my $gene (keys %hNew){
 
         if ($hNew1{$gene1} eq $hOld1{$gene1}) {
             ($matching_key) = grep { $_ =~ /$gene1/  } keys %hOld;
-              	print OUT $gene1 . "\t" . $matching_key ."\n";
+              	print OUT $gene1 . "\t" . $gene . "\t" . $matching_key ."\n";
                 # print $gene1 . " " . $matching_key. "\n" ;
-        }
+        } 
+        if ($hNew1{$gene1} ne $hOld1{$gene1}) {
+            ($matching_key) = grep { $_ =~ /$gene1/  } keys %hOld;
+                print OUTd $gene1 . "\t" . $gene . "\t" . $matching_key ."\t+1\n";
+        } 
     }
 }
 
