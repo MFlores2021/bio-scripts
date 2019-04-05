@@ -28,7 +28,6 @@ open sOUT, ">$input.desc.fasta" or die;
 
 ### To get Function
 my %hashdesc;
-my %hashid;
 
 open FILE3, "$list" or die;
 
@@ -38,15 +37,14 @@ while (my $line3=<FILE3>) {
     $desc =~ s/Note=//g;
     (my $sdesc) = split /\;/, $desc;  
       if (length(trim($protid)) > 0){
-	$hashdesc{trim($protid)}{desc}   = trim($desc);
-        $hashdesc{trim($protid)}{sdesc}   = trim($sdesc);
-	$hashid{trim($prot)}   = trim($protid);
+	   	$hashdesc{trim($protid.".1")}{desc}   = $desc;
+        $hashdesc{trim($protid.".1")}{sdesc}   = trim($sdesc);
 	}
 }
-#print Dumper \%hashdesc;
+
 
 open ($sfh, "<$input");
-my $j=0;
+
 while (<$sfh>) {
     ## if we find a header line ...
     if (/^\>(.*)/) {
@@ -55,10 +53,9 @@ while (<$sfh>) {
         unless ($first) {
 			(my $id) = split /\ /, $header; 
             $id =~ s/mRNA://g;
-      	    #print OUT ">" . $hashid{$id} . " ". $hashdesc{$hashid{$id}}{desc} ."\n";
-            print OUT ">Trancript_" .$j . " ". $hashdesc{$hashid{$id}}{desc} ."\n";	    
-	    print OUT  $seq;
-            print sOUT ">" . $hashid{$id} . " ". $hashdesc{$hashid{$id}}{sdesc} ;
+      	    print OUT ">" . $id . " ". $hashdesc{$id}{desc} ;
+			print OUT  $seq;
+            print sOUT ">" . $id . " ". $hashdesc{$id}{sdesc} ;
             print sOUT  "\n" . $seq;           
             ## reset the sequence
             $seq = '';
@@ -66,7 +63,7 @@ while (<$sfh>) {
 
         $first = 0;
         $header = $1;
-	$j++;
+
     ## else we've found a sequence line
     } else {
         ## skip it if it is just whitespace
@@ -78,10 +75,9 @@ while (<$sfh>) {
 }
           (my $id) = split /\ /, $header; 
           $id =~ s/mRNA://g;
-	    print OUT ">Trancript_" .$j . " ". $hashdesc{$hashid{$id}}{desc} ."\n"; 
-      	    #print OUT ">" . $id . " ". $hashdesc{$hashid{$id}}{desc} ;
-	    print OUT  $seq;
-            print sOUT ">" . $id . " ". $hashdesc{$hashid{$id}}{sdesc} ;
+      	    print OUT ">" . $id . " ". $hashdesc{$id}{desc} ;
+			print OUT  $seq;
+            print sOUT ">" . $id . " ". $hashdesc{$id}{sdesc} ;
             print sOUT  "\n" . $seq;           
 
 sub trim { my $s = shift; $s =~ s/^\s+|\s+$//g; return $s };

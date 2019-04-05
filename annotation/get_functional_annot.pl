@@ -126,9 +126,9 @@ while (my $line6=<FILE6>) {
     if (trim($hashlocus{$id}{desc}) ne '') {
 		$output = $output .  $hashlocus{$id}{desc} ; $j++;
     }
-    elsif (trim($hashncbi{$id}{desc}) ne '') {
-		$output = $output .  $hashncbi{$id}{desc} ;  $i++; #print $id."\t";
-    }
+#    elsif (trim($hashncbi{$id}{desc}) ne '') {
+#		$output = $output .  $hashncbi{$id}{desc} ;  $i++; #print $id."\t";
+#    }
     elsif (trim($hashahrd{$id}{desc}) ne '') {
 		$output = $output .  $hashahrd{$id}{desc} ; $k++;
 	}
