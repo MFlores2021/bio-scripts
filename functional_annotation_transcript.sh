@@ -36,7 +36,7 @@ ls *.fsa | parallel -j 30 blastall -p blastx -i {} -o swiss-{.}.tab -d ~/db/swis
 
 ls *.fsa | parallel -j 30 blastall -p blastx -i {} -o trembl-{.}.tab -d ~/db/trembl/uniprot-plant_trembl.fasta -e 0.0001 -v 200 -b 200 -m 8 -a 3
 
-ls *.fsa | parallel -j 30 blastall -p blastx -i {} -o ogs2-{.}.tab -d ~/db/OGS2.0/Dcitr_OGSv2.0_pep.fa -e 0.0001 -v 200 -b 200 -m 8 -a 3
+#ls *.fsa | parallel -j 30 blastall -p blastx -i {} -o ogs2-{.}.tab -d ~/db/OGS2.0/Dcitr_OGSv2.0_pep.fa -e 0.0001 -v 200 -b 200 -m 8 -a 3
 
 # Create template to run AHRD
 end=$(ls -1q *.fsa | wc -l )
@@ -75,14 +75,14 @@ blast_dbs:
       blacklist: /home/mrf252/tools/AHRD/test/resources/blacklist_descline.txt
       token_blacklist: /home/mrf252/tools/AHRD/test/resources/blacklist_token.txt
       filter: /home/mrf252/tools/AHRD/test/resources/filter_descline_trembl.txt
-   ogs2:
-      weight: 10
-      description_score_bit_score_weight:  2.917405
-      file: ogs2-$i.tab
-      database: /home/mrf252/db/OGS2.0/Dcitr_OGSv2.0_pep.fa
-      blacklist: /home/mrf252/tools/AHRD/test/resources/blacklist_descline.txt
-      token_blacklist: /home/mrf252/tools/AHRD/test/resources/blacklist_token.txt
-      filter: /home/mrf252/tools/AHRD/test/resources/filter_descline_trembl.txt
+#   ogs2:
+#      weight: 10
+#      description_score_bit_score_weight:  2.917405
+#      file: ogs2-$i.tab
+#      database: /home/mrf252/db/OGS2.0/Dcitr_OGSv2.0_pep.fa
+#      blacklist: /home/mrf252/tools/AHRD/test/resources/blacklist_descline.txt
+#      token_blacklist: /home/mrf252/tools/AHRD/test/resources/blacklist_token.txt
+#      filter: /home/mrf252/tools/AHRD/test/resources/filter_descline_trembl.txt
 " >ahrd_$base.part$i.yml
 i=$(( i+1 ))
 done 
@@ -100,13 +100,14 @@ ls *.fsa | parallel -j 20 ~/tools/interproscan-5.32-71.0/interproscan.sh -t n -i
 cd ..
 cat tmp/*csv >ahrd_$base.csv
 cat tmp/*tsv >interpro_$base.tsv
-cd tmp
 
 grep "Unknown protein" ahrd_$base.csv | cut -f1 >$base.unknown.txt
 
 perl ~/tools/scripts/subset_fasta.pl -i $base.unknown.txt < $fasta > $base.unknown.fa
 
-perl ~/tools/bio-scripts/split_multifasta.pl --input_file $base.unknown.fa --output_dir ./ --seqs_per_file=500
+mkdir tmp2
+cd tmp2
+perl ~/tools/bio-scripts/split_multifasta.pl --input_file ../$base.unknown.fa --output_dir ./ --seqs_per_file=500
 
 ls *.fsa | parallel -j 30 blastall -p blastx -i {} -o nr-{.}.tab -d ~/db/nr/arthropoda/nr.arth.fa -e 0.0001 -v 200 -b 200 -m 8 -a 3
 
@@ -120,7 +121,7 @@ echo "proteins_fasta: $i.fsa
 token_score_bit_score_weight: 0.6
 token_score_database_score_weight: 0.4
 token_score_overlap_score_weight: 0.0
-output: ./ahrdunknown_$base.$i.csv
+output: ./ahrd.unknown_$base.$i.csv
 
 blast_dbs: 
    nr: 
