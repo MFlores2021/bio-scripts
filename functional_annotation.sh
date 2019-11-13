@@ -91,6 +91,45 @@ ls *.fsa | parallel -j 20 ~/tools/interproscan-5.32-71.0/interproscan.sh -t p -i
 cd ..
 cat tmp/*csv >ahrd_$base.csv
 cat tmp/*tsv >interpro_$base.tsv
-cd tmp
+mkdir tmp2
+cd tmp2
+grep "Unknown protein" ../ahrd_$base.csv | cut -f1 >$base.unknown.txt
 
-ls ~/db/nr/plant/*.faa | parallel -j 10 blastall -p blastp -i ../ITAG3.93_ch00.fasta -o {.}.tab -d {} -e 0.0001 -v 200 -b 200 -m 8 -a 50
+perl ~/tools/scripts/subset_fasta.pl -i $base.unknown.txt < ../$fasta > $base.unknown.fa
+ls ~/db/nr/plant/*.faa | parallel -j 10 blastall -p blastp -i $base.unknown.fa -o {.}.tab -d {} -e 0.0001 -v 200 -b 200 -m 8 -a 50
+mv ~/db/nr/plant/*.tab .
+cat *.tab >plant.protein.tab
+
+# Create template to run AHRD with nr
+end=$(ls -1q *.fa | wc -l )
+i=1
+while [ $i -le $end ]
+do
+echo "proteins_fasta: $base.unknown.fa
+token_score_bit_score_weight: 0.6
+token_score_database_score_weight: 0.4
+token_score_overlap_score_weight: 0.0
+output: ./ahrdunknown_$base.$i.csv
+
+blast_dbs: 
+   nr: 
+      weight: 50
+      description_score_bit_score_weight:  2.590211
+      file: plant.protein.tab 
+      database: /home/mrf252/db/nr/plant/plant.protein.fa
+      blacklist: /home/mrf252/tools/AHRD/test/resources/blacklist_descline.txt
+      token_blacklist: /home/mrf252/tools/AHRD/test/resources/blacklist_token.txt
+      filter: /home/mrf252/tools/AHRD/test/resources/filter_descline_tair.txt
+      fasta_header_regex: '^>(?<accession>.+?) (?<description>.+?)'
+" >ahrd_$base.part$i.yml
+i=$(( i+1 ))
+done
+
+#Run AHRD unknown
+
+ls ahrd_*.yml | parallel -j 50 java -Xmx4g -jar ~/tools/AHRD/dist/ahrd.jar {} 
+
+cd ..
+cat tmp2/*csv >ahrd_$base.unknown.csv
+cat  <(grep -v "^Prot\|^#" ahrd_$base.unknown.csv) <(grep -v "^Prot\|^#\|Unknown protein" ahrd_$base.csv) >ahrd_$base_final.csv
+
