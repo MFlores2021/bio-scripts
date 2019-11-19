@@ -150,8 +150,8 @@ sub get_trans_data{
         my $exp; 
         if($entry[8] =~ /gene_id\s+\"(ERCC\S+)\"\;/){
             $trans_id = $1; 
-        }elsif ($entry[8] =~ /transcript_id\s+\"(\w+\.*.*)\"\;/){ #transcript_id\s+\"(\w+)\"\;/
-            $trans_id = $1; 
+        }elsif ($entry[8] =~ /transcript_id\s+\"(\w+\.*\.\d+\.\d+)\"\;/){ # /transcript_id\s+\"(\w+\.*.*)\"\;/){ #transcript_id\s+\"(\w+)\"\;/
+            $trans_id = $1; # print Dumper \$1;
         }else{
             die "\n\nCould not find transcript id in line: $line\n\n";
         }
