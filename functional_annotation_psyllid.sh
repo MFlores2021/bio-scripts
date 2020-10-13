@@ -24,17 +24,17 @@ cd tmp
 sed -i 's/*//g' $fasta
 
 # Split files to run it faster
-#perl ~/tools/bio-scripts/split_multifasta.pl --input_file $fasta --output_dir ./ --seqs_per_file=1000 
+perl ~/tools/bio-scripts/split_multifasta.pl --input_file $fasta --output_dir ./ --seqs_per_file=1000 
 
-# for f in *; do mv $f part_$f; done
+ for f in *; do mv $f part_$f; done
 
 # Run Blastp
 
-#ls *.fsa | parallel -j 30 blastall -p blastp -i {} -o arap-{.}.tab -d ~/db/araport11/Araport11_genes.201606.pep.fasta -e 0.0001 -v 200 -b 200 -m 8 -a 3
+ls *.fsa | parallel -j 30 blastall -p blastp -i {} -o arap-{.}.tab -d ~/db/araport11/Araport11_genes.201606.pep.fasta -e 0.0001 -v 200 -b 200 -m 8 -a 3
 
-#ls *.fsa | parallel -j 30 blastall -p blastp -i {} -o swiss-{.}.tab -d ~/db/swiss/uniprot-plant_swissprot.fasta -e 0.0001 -v 200 -b 200 -m 8 -a 3
+ls *.fsa | parallel -j 30 blastall -p blastp -i {} -o swiss-{.}.tab -d ~/db/swiss/uniprot-plant_swissprot.fasta -e 0.0001 -v 200 -b 200 -m 8 -a 3
 
-#ls *.fsa | parallel -j 30 blastall -p blastp -i {} -o trembl-{.}.tab -d ~/db/trembl/uniprot-plant_trembl.fasta -e 0.0001 -v 200 -b 200 -m 8 -a 3
+ls *.fsa | parallel -j 30 blastall -p blastp -i {} -o trembl-{.}.tab -d ~/db/trembl/uniprot-plant_trembl.fasta -e 0.0001 -v 200 -b 200 -m 8 -a 3
 
 
 # Create template to run AHRD
@@ -80,28 +80,28 @@ done
 
 #Run AHRD
 
-#ls ahrd_*.yml | parallel -j 50 java -Xmx4g -jar ~/tools/AHRD/dist/ahrd.jar {} 
+ls ahrd_*.yml | parallel -j 50 java -Xmx4g -jar ~/tools/AHRD/dist/ahrd.jar {} 
 
 
 
 # InterproScan:
 
-#ls *.fsa | parallel -j 20 ~/tools/interproscan-5.32-71.0/interproscan.sh -t n -i {} -goterms -iprlookup -pa -f tsv -appl Pfam -dra >{}.log
+ls *.fsa | parallel -j 20 ~/tools/interproscan-5.32-71.0/interproscan.sh -t n -i {} -goterms -iprlookup -pa -f tsv -appl Pfam -dra >{}.log
 
 cd ..
-#cat tmp/*csv >ahrd_$base.csv
-#cat tmp/*tsv >interpro_$base.tsv
+cat tmp/*csv >ahrd_$base.csv
+cat tmp/*tsv >interpro_$base.tsv
 
 mkdir tmp2
 cd tmp2
 
-#grep "Unknown protein" ../ahrd_$base.csv | cut -f1 >$base.unknown.txt
+grep "Unknown protein" ../ahrd_$base.csv | cut -f1 >$base.unknown.txt
 
-#perl ~/tools/scripts/subset_fasta.pl -i $base.unknown.txt < ../$fasta > $base.unknown.fa
+perl ~/tools/scripts/subset_fasta.pl -i $base.unknown.txt < ../$fasta > $base.unknown.fa
 
-#perl ~/tools/bio-scripts/split_multifasta.pl --input_file $base.unknown.fa --output_dir ./ --seqs_per_file=500
+perl ~/tools/bio-scripts/split_multifasta.pl --input_file $base.unknown.fa --output_dir ./ --seqs_per_file=500
 
-#ls *.fsa | parallel -j 30 blastall -p blastp -i {} -o nr-{.}.tab -d ~/db/nr/arthropoda/nr.arth.fa -e 0.0001 -v 200 -b 200 -m 8 -a 3
+ls *.fsa | parallel -j 30 blastall -p blastp -i {} -o nr-{.}.tab -d ~/db/nr/arthropoda/nr.arth.fa -e 0.0001 -v 200 -b 200 -m 8 -a 3
 
 
 # Create template to run AHRD with nr
