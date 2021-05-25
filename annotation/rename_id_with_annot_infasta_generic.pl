@@ -8,7 +8,7 @@ rename_id_with_annot_infasta.pl
 =head1 DESCRIPTION
 Cutomized for the following inputs files.
     File with description:
-    Solyc00g005000.2    Solyc00g005000.3    Note=Eukaryotic aspartyl protease family protein (AHRD V3.3 *** 
+    Solyc00g005000.2.1    Solyc00g005000.3.1    Note=Eukaryotic aspartyl protease family protein (AHRD V3.3 *** 
     Fasta File:
     mRNA:Solyc00g005000.3.1 (joined) (translated)
 =cut
@@ -16,19 +16,20 @@ Cutomized for the following inputs files.
 #use strict;
 use Data::Dumper qw(Dumper);
 use List::Util 'max';
+
 #use warnings;
 
-my $fasta=$ARGV[0];
-my $desc=$ARGV[1];
+$input=$ARGV[0];
+$list=$ARGV[1];
  
-open OUT, ">$fasta.full_desc.fasta" or die;
-open sOUT, ">$fasta._.fasta" or die;
+open OUT, ">$input.full_desc.fasta" or die;
+open sOUT, ">$input.desc.fasta" or die;
 
 
 ### To get Function
 my %hashdesc;
 
-open FILE3, "$desc" or die;
+open FILE3, "$list" or die;
 
 while (my $line3=<FILE3>) {   
     # chomp;
@@ -36,13 +37,13 @@ while (my $line3=<FILE3>) {
     $desc =~ s/Note=//g;
     (my $sdesc) = split /\;/, $desc;  
       if (length(trim($protid)) > 0){
-	   	$hashdesc{trim($protid.".1")}{desc}   = $desc;
-        $hashdesc{trim($protid.".1")}{sdesc}   = trim($sdesc);
+	$hashdesc{trim($protid)}{desc}   = $desc;
+        $hashdesc{trim($protid)}{sdesc}   = trim($sdesc);
 	}
 }
 
 
-open ($sfh, "<$fasta");
+open ($sfh, "<$input");
 
 while (<$sfh>) {
     ## if we find a header line ...

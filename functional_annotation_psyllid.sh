@@ -86,7 +86,11 @@ ls ahrd_*.yml | parallel -j 50 java -Xmx4g -jar ~/tools/AHRD/dist/ahrd.jar {}
 
 # InterproScan:
 
+<<<<<<< HEAD
 ls *.fsa | parallel -j 20 ~/tools/interproscan-5.32-71.0/interproscan.sh -t n -i {} -goterms -iprlookup -pa -f tsv -appl Pfam -dra >{}.log
+=======
+ls *.fsa | parallel -j 20 ~/tools/interproscan-5.32-71.0/interproscan.sh -t p -i {} -goterms -iprlookup -pa -f tsv -appl Pfam -dra >{}.log
+>>>>>>> 73ceb59d7e9795a6ff177298abd1698dccab552d
 
 cd ..
 cat tmp/*csv >ahrd_$base.csv
@@ -136,6 +140,6 @@ ls ahrd_*.yml | parallel -j 50 java -Xmx4g -jar ~/tools/AHRD/dist/ahrd.jar {}
 cd ..
 cat tmp2/*csv >ahrd_$base.unknown.csv
 
-#cat <(grep -v "Unknown protein" ahrd_$base.csv) ahrd_$base.unknown.csv | sort >ahrd_$base.final.csv 
+cat <(grep -v "Unknown protein" ahrd_$base.csv) ahrd_$base.unknown.csv | sort >ahrd_$base.final.csv 
 
 
